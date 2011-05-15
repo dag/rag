@@ -1,7 +1,8 @@
+from __future__ import absolute_import
 from git import Repo
 
 
-class Git(object):
+class History(object):
 
     def __init__(self, path):
         self.path = path

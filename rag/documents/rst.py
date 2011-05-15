@@ -1,34 +1,14 @@
-from abc import ABCMeta, abstractproperty
-import docutils.core as rst
-from docutils import nodes
+from docutils import core, nodes
+from . import AbstractDocument
 
 
-class AbstractDocument(object):
-    __metaclass__ = ABCMeta
-
-    def __init__(self, path):
-        self.path = path
-
-    @abstractproperty
-    def meta(self):
-        pass
-
-    @abstractproperty
-    def id(self):
-        pass
-
-    @abstractproperty
-    def title(self):
-        pass
-
-
-class Rst(AbstractDocument):
+class Document(AbstractDocument):
 
     @property
     def parts(self):
         if not hasattr(self, '_parts'):
             with open(self.path) as f:
-                self._parts = rst.publish_parts(f.read(),
+                self._parts = core.publish_parts(f.read(),
                     source_path=self.path,
                     writer_name='html')
         return self._parts
@@ -38,7 +18,7 @@ class Rst(AbstractDocument):
         if not hasattr(self, '_doctree'):
             with open(self.path) as f:
                 src = f.read()
-            self._doctree = rst.publish_doctree(src, source_path=self.path)
+            self._doctree = core.publish_doctree(src, source_path=self.path)
         return self._doctree
 
     @property
