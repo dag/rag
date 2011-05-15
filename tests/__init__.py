@@ -1,12 +1,34 @@
 from attest import assert_hook
 
 from os import path
+from rag import utils
 from rag.documents import rst
 from rag.histories import git
 from attest import Tests
 
 ROOT_PATH = path.abspath(path.dirname(__file__))
 SAMPLE_DOC = path.join(ROOT_PATH, 'documents', 'sample.rst')
+
+
+reusable = Tests()
+
+@reusable.context
+def reusable_class():
+
+    class Archetype(utils.ReusableMixin):
+
+        typical = 'default'
+
+    yield Archetype, Archetype.using(typical='non-standard', more='less')
+
+@reusable.test
+def reusable_types(archetype, customized):
+    assert archetype.typical == 'default'
+    assert not hasattr(archetype, 'more')
+    assert customized.typical == 'non-standard'
+    assert customized.more == 'less'
+    assert issubclass(customized, archetype)
+    assert customized.__name__ == archetype.__name__
 
 
 documents = Tests()
