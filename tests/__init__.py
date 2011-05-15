@@ -4,6 +4,7 @@ from os import path
 from rag import utils
 from rag.documents import rst
 from rag.histories import git
+from rag.templates import genshi
 from attest import Tests
 
 ROOT_PATH = path.abspath(path.dirname(__file__))
@@ -58,3 +59,24 @@ def history_properties(history):
 def commits(history):
     assert len(history.commits) == 1
     assert history.commits[0].message == 'basic reST documents\n'
+
+
+templates = Tests()
+
+@templates.context
+def genshi_html_template():
+    yield genshi.Template
+
+@templates.context
+def genshi_xml_template():
+    yield genshi.Template.using(serializer='xml', doctype=None)
+
+@templates.test
+def serializer(html, xml):
+    assert html.serializer == 'html'
+    assert xml.serializer == 'xml'
+
+@templates.test
+def doctype(html, xml):
+    assert html.doctype == 'html5'
+    assert xml.doctype == None
