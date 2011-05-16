@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from ..utils import ReusableMixin, path_from_module
+from ..utils import ReusableMixin
 from . import AbstractTemplate
 from genshi.template import TemplateLoader
 
@@ -15,8 +15,7 @@ class Template(AbstractTemplate, ReusableMixin):
     @property
     def loader(self):
         if self.module not in _loaders:
-            templates = path_from_module(self.module, 'templates')
-            _loaders[self.module] = TemplateLoader([templates])
+            _loaders[self.module] = TemplateLoader([self.directory])
         return _loaders[self.module]
 
     def render(self, **context):

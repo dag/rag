@@ -43,6 +43,25 @@ def reusable_types(archetype, customized):
     assert customized.__name__ == archetype.__name__
 
 
+directories = Tests()
+
+@directories.context
+def module_directory():
+
+    class Arbitrary(utils.ModuleDirectory):
+        __directory__ = 'arbitraries'
+
+    yield Arbitrary(__name__, 'arbitrary-file.ext')
+
+@directories.test
+def arbitrary_file(arbitrary):
+    assert arbitrary.module == __name__
+    assert arbitrary.filename == 'arbitrary-file.ext'
+    assert arbitrary.directory == path.join(ROOT_PATH, 'arbitraries')
+    assert arbitrary.filepath\
+        == path.join(ROOT_PATH, 'arbitraries', 'arbitrary-file.ext')
+
+
 documents = Tests()
 
 @documents.context

@@ -1,12 +1,10 @@
 from abc import ABCMeta, abstractmethod
+from ..utils import ModuleDirectory
 
 
-class AbstractTemplate(object):
+class AbstractTemplate(ModuleDirectory):
     __metaclass__ = ABCMeta
-
-    def __init__(self, module, filename):
-        self.module = module
-        self.filename = filename
+    __directory__ = 'templates'
 
     @abstractmethod
     def render(self, **context):
