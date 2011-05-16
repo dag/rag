@@ -7,18 +7,18 @@ class Document(AbstractDocument):
     @property
     def parts(self):
         if not hasattr(self, '_parts'):
-            with open(self.path) as f:
+            with open(self.filepath) as f:
                 self._parts = core.publish_parts(f.read(),
-                    source_path=self.path,
+                    source_path=self.filepath,
                     writer_name='html')
         return self._parts
 
     @property
     def doctree(self):
         if not hasattr(self, '_doctree'):
-            with open(self.path) as f:
+            with open(self.filepath) as f:
                 src = f.read()
-            self._doctree = core.publish_doctree(src, source_path=self.path)
+            self._doctree = core.publish_doctree(src, source_path=self.filepath)
         return self._doctree
 
     @property

@@ -66,7 +66,7 @@ documents = Tests()
 
 @documents.context
 def rst_document():
-    yield rst.Document(SAMPLE_DOC)
+    yield rst.Document(__name__, 'sample.rst')
 
 @documents.test
 def doc_properties(doc):

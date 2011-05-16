@@ -1,11 +1,10 @@
 from abc import ABCMeta, abstractproperty
+from ..utils import ModuleDirectory
 
 
-class AbstractDocument(object):
+class AbstractDocument(ModuleDirectory):
     __metaclass__ = ABCMeta
-
-    def __init__(self, path):
-        self.path = path
+    __directory__ = 'documents'
 
     @abstractproperty
     def meta(self):
