@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed
+  xmlns="http://www.w3.org/2005/Atom"
+  xmlns:py="http://genshi.edgewall.org/"
+>
+  <title>Recently posted on this $generator site</title>
+</feed>

@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from attest import assert_hook
 
 from os import path
+from textwrap import dedent
 from rag import utils
 from rag.documents import rst
 from rag.histories import git
@@ -10,6 +11,15 @@ from attest import Tests
 
 ROOT_PATH = path.abspath(path.dirname(__file__))
 SAMPLE_DOC = path.join(ROOT_PATH, 'documents', 'sample.rst')
+
+
+simple = Tests()
+
+@simple.test
+def path_from_module():
+    assert utils.path_from_module(__name__) == ROOT_PATH
+    assert utils.path_from_module(__name__, 'documents', 'sample.rst')\
+        == SAMPLE_DOC
 
 
 reusable = Tests()
@@ -62,22 +72,33 @@ def commits(history):
     assert history.commits[0].message == 'basic reST documents\n'
 
 
-templates = Tests()
+html = Tests()
 
-@templates.context
+@html.context
 def genshi_html_template():
-    yield genshi.Template
+    yield genshi.Template(__name__, 'index.html')
 
-@templates.context
+@html.test
+def index(template):
+    assert template.render(generator='Rag') == dedent("""\
+        <!DOCTYPE html>
+        <html>
+          <body>
+            <h1>Welcome to this Rag site!</h1>
+          </body>
+        </html>""")
+
+
+xml = Tests()
+
+@xml.context
 def genshi_xml_template():
-    yield genshi.Template.using(serializer='xml', doctype=None)
+    yield genshi.XmlTemplate(__name__, 'atom.xml')
 
-@templates.test
-def serializer(html, xml):
-    assert html.serializer == 'html'
-    assert xml.serializer == 'xml'
-
-@templates.test
-def doctype(html, xml):
-    assert html.doctype == 'html5'
-    assert xml.doctype == None
+@xml.test
+def atom(template):
+    assert template.render(generator='Rag') == dedent("""\
+        <?xml version="1.0" encoding="utf-8"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title>Recently posted on this Rag site</title>
+        </feed>""")
