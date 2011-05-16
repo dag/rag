@@ -7,6 +7,7 @@ from rag import utils
 from rag.documents import rst
 from rag.histories import git
 from rag.templates import genshi
+from rag.stylesheets import scss
 from attest import Tests
 
 ROOT_PATH = path.abspath(path.dirname(__file__))
@@ -121,3 +122,26 @@ def atom(template):
         <feed xmlns="http://www.w3.org/2005/Atom">
           <title>Recently posted on this Rag site</title>
         </feed>""")
+
+
+stylesheets = Tests()
+
+@stylesheets.context
+def scss_stylesheet():
+    yield scss.Stylesheet(__name__, 'main.scss')
+
+@stylesheets.test
+def main(stylesheet):
+    assert stylesheet.render() == dedent("""\
+        #navbar {
+          border-bottom-color: #ce4dd6;
+          border-bottom-style: solid;
+        }
+        .selector a {
+          display: block;
+        }
+        .selector strong {
+          color: #0000ff;
+        }
+
+        """)
