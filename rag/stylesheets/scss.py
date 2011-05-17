@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from brownie.caching import cached_property
 from . import AbstractStylesheet
 from ..utils import ReusableMixin
 import scss
@@ -8,12 +9,11 @@ class Stylesheet(AbstractStylesheet, ReusableMixin):
 
     compress = False
 
-    @property
+    @cached_property
     def compiler(self):
-        if not hasattr(self, '_compiler'):
-            self._compiler = scss.Scss()
-            self._compiler.scss_opts.update(compress=self.compress)
-        return self._compiler
+        compiler = scss.Scss()
+        compiler.scss_opts.update(compress=self.compress)
+        return compiler
 
     def render(self):
         with open(self.filepath) as f:
