@@ -1,8 +1,11 @@
 from docutils import core, nodes
 from . import AbstractDocument
+from ..utils import ReusableMixin
 
 
-class Document(AbstractDocument):
+class Document(AbstractDocument, ReusableMixin):
+
+    settings = None
 
     @property
     def parts(self):
@@ -10,7 +13,8 @@ class Document(AbstractDocument):
             with open(self.filepath) as f:
                 self._parts = core.publish_parts(f.read(),
                     source_path=self.filepath,
-                    writer_name='html')
+                    writer_name='html',
+                    settings_overrides=self.settings)
         return self._parts
 
     @property
@@ -18,7 +22,9 @@ class Document(AbstractDocument):
         if not hasattr(self, '_doctree'):
             with open(self.filepath) as f:
                 src = f.read()
-            self._doctree = core.publish_doctree(src, source_path=self.filepath)
+            self._doctree = core.publish_doctree(src,
+                source_path=self.filepath,
+                settings_overrides=self.settings)
         return self._doctree
 
     @property
@@ -35,4 +41,4 @@ class Document(AbstractDocument):
 
     @property
     def title(self):
-        return self.parts['title']
+        return self.doctree.attributes['title']

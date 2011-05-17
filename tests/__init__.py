@@ -75,6 +75,11 @@ def doc_properties(doc):
     assert doc.id == 'this-is-a-sample-rest-document'
     assert doc.title == 'This is a Sample reST Document'
 
+@documents.test
+def parts(doc):
+    assert doc.parts['html_title']\
+        == '<h1 class="title">This is a Sample reST Document</h1>\n'
+
 
 histories = Tests()
 
