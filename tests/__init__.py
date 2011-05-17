@@ -3,6 +3,7 @@ from attest import assert_hook
 
 from os import path
 from textwrap import dedent
+from datetime import date
 from rag import utils
 from rag.documents import rst
 from rag.histories import git
@@ -95,6 +96,14 @@ def history_properties(history):
 def commits(history):
     assert len(history.commits) == 1
     assert history.commits[0].message == 'basic reST documents\n'
+
+@histories.test
+def edits(history):
+    assert len(history.edits) == 1
+    assert history.edits[0].comment == 'basic reST documents\n'
+    assert str(history.edits[0].author) == 'Dag Odenhall'
+    assert history.created.date() == date(2011, 5, 14)
+    assert history.created == history.modified == history.edits[0].timestamp
 
 
 html = Tests()
