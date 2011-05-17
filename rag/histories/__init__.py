@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractproperty
+from brownie.caching import cached_property
 
 
 class AbstractHistory(object):
@@ -7,11 +8,15 @@ class AbstractHistory(object):
     def __init__(self, filepath):
         self.filepath = filepath
 
-    @property
+    @cached_property
     def created(self):
         return self.edits[0].timestamp
 
-    @property
+    @cached_property
+    def author(self):
+        return self.edits[0].author
+
+    @cached_property
     def modified(self):
         return self.edits[-1].timestamp
 

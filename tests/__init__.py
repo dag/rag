@@ -113,6 +113,7 @@ def edits(history):
     assert len(history.edits) == 1
     assert history.edits[0].comment == 'basic reST documents\n'
     assert str(history.edits[0].author) == 'Dag Odenhall'
+    assert history.author == history.edits[0].author
     assert history.created.date() == date(2011, 5, 14)
     assert history.created == history.modified == history.edits[0].timestamp
 
@@ -137,6 +138,7 @@ def file_author(history):
     except ImportError:
         name = None
     assert history.edits[0].author in {os.getlogin(), name}
+    assert history.author == history.edits[0].author
 
 
 html = Tests()
