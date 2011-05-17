@@ -4,12 +4,18 @@ from attest import assert_hook
 from os import path
 from textwrap import dedent
 from datetime import date
-from rag import utils
-from rag.documents import rst
-from rag.histories import git
-from rag.templates import genshi
-from rag.stylesheets import scss
 from attest import Tests
+
+# Make sure the modules are loaded but don't import them to the top-level
+# namespace of this module because we want to use their names for
+# test collections
+import rag.documents.rst
+import rag.histories.git
+import rag.templates.genshi
+import rag.stylesheets.scss
+
+# Let us drop the 'rag.' prefix
+from rag import utils, documents, histories, templates, stylesheets
 
 ROOT_PATH = path.abspath(path.dirname(__file__))
 SAMPLE_DOC = path.join(ROOT_PATH, 'documents', 'sample.rst')
@@ -64,40 +70,40 @@ def arbitrary_file(arbitrary):
         == path.join(ROOT_PATH, 'arbitraries', 'arbitrary-file.ext')
 
 
-documents = Tests()
+rst = Tests()
 
-@documents.context
+@rst.context
 def rst_document():
-    yield rst.Document(__name__, 'sample.rst')
+    yield documents.rst.Document(__name__, 'sample.rst')
 
-@documents.test
-def doc_properties(doc):
+@rst.test
+def rst_properties(doc):
     assert doc.meta['type'] == 'blog'
     assert doc.id == 'this-is-a-sample-rest-document'
     assert doc.title == 'This is a Sample reST Document'
 
-@documents.test
+@rst.test
 def parts(doc):
     assert doc.parts['html_title']\
         == '<h1 class="title">This is a Sample reST Document</h1>\n'
 
 
-histories = Tests()
+git = Tests()
 
-@histories.context
+@git.context
 def git_history():
-    yield git.History(SAMPLE_DOC)
+    yield histories.git.History(SAMPLE_DOC)
 
-@histories.test
+@git.test
 def history_properties(history):
     assert history.path_in_repo == 'tests/documents/sample.rst'
 
-@histories.test
+@git.test
 def commits(history):
     assert len(history.commits) == 1
     assert history.commits[0].message == 'basic reST documents\n'
 
-@histories.test
+@git.test
 def edits(history):
     assert len(history.edits) == 1
     assert history.edits[0].comment == 'basic reST documents\n'
@@ -110,7 +116,7 @@ html = Tests()
 
 @html.context
 def genshi_html_template():
-    yield genshi.Template(__name__, 'index.html')
+    yield templates.genshi.Template(__name__, 'index.html')
 
 @html.test
 def index(template):
@@ -127,7 +133,7 @@ xml = Tests()
 
 @xml.context
 def genshi_xml_template():
-    yield genshi.XmlTemplate(__name__, 'atom.xml')
+    yield templates.genshi.XmlTemplate(__name__, 'atom.xml')
 
 @xml.test
 def atom(template):
@@ -142,7 +148,7 @@ text = Tests()
 
 @text.context
 def genshi_text_template():
-    yield genshi.TextTemplate(__name__, 'robots.txt')
+    yield templates.genshi.TextTemplate(__name__, 'robots.txt')
 
 @text.test
 def robots(template):
@@ -152,13 +158,13 @@ def robots(template):
         """)
 
 
-stylesheets = Tests()
+scss = Tests()
 
-@stylesheets.context
+@scss.context
 def scss_stylesheet():
-    yield scss.Stylesheet(__name__, 'main.scss')
+    yield stylesheets.scss.Stylesheet(__name__, 'main.scss')
 
-@stylesheets.test
+@scss.test
 def main(stylesheet):
     assert stylesheet.render() == dedent("""\
         #navbar {
