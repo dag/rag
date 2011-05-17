@@ -1,9 +1,13 @@
 from __future__ import absolute_import
 from attest import assert_hook
 
+import os
+import time
+
 from os import path
 from textwrap import dedent
-from datetime import date
+from datetime import date, datetime
+from tempfile import NamedTemporaryFile
 from attest import Tests
 
 # Make sure the modules are loaded but don't import them to the top-level
@@ -11,6 +15,7 @@ from attest import Tests
 # test collections
 import rag.documents.rst
 import rag.histories.git
+import rag.histories.fs
 import rag.templates.genshi
 import rag.stylesheets.scss
 
@@ -110,6 +115,28 @@ def edits(history):
     assert str(history.edits[0].author) == 'Dag Odenhall'
     assert history.created.date() == date(2011, 5, 14)
     assert history.created == history.modified == history.edits[0].timestamp
+
+
+fs = Tests()
+
+@fs.context
+def tempfile():
+    with NamedTemporaryFile() as tf:
+        os.utime(tf.name, (666, 666))
+        yield histories.fs.History(tf.name)
+
+@fs.test
+def file_timestamps(history):
+    assert history.created == history.modified == datetime.fromtimestamp(666)
+
+@fs.test
+def file_author(history):
+    try:
+        import pwd
+        name = pwd.getpwuid(os.getuid()).pw_gecos.split(',')[0]
+    except ImportError:
+        name = None
+    assert history.edits[0].author in {os.getlogin(), name}
 
 
 html = Tests()
