@@ -138,6 +138,20 @@ def atom(template):
         </feed>""")
 
 
+text = Tests()
+
+@text.context
+def genshi_text_template():
+    yield genshi.TextTemplate(__name__, 'robots.txt')
+
+@text.test
+def robots(template):
+    assert template.render(rules={'*': '/'}) == dedent("""\
+        User-Agent: *
+        Disallow: /
+        """)
+
+
 stylesheets = Tests()
 
 @stylesheets.context

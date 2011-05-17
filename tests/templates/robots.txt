@@ -1,0 +1,4 @@
+{% for agent, block in rules.iteritems() %}\
+User-Agent: $agent
+Disallow: $block
+{% end %}\
