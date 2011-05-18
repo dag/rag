@@ -9,18 +9,7 @@ from textwrap import dedent
 from datetime import date, datetime
 from tempfile import NamedTemporaryFile
 from attest import Tests, tempdir
-
-# Make sure the modules are loaded but don't import them to the top-level
-# namespace of this module because we want to use their names for
-# test collections
-import rag.documents.rst
-import rag.histories.git
-import rag.histories.fs
-import rag.templates.genshi
-import rag.stylesheets.scss
-
-# Let us drop the 'rag.' prefix
-from rag import utils, recipes, documents, histories, templates, stylesheets
+from rag import utils, recipes, lazy
 
 ROOT_PATH = path.abspath(path.dirname(__file__))
 SAMPLE_DOC = path.join(ROOT_PATH, 'documents', 'sample.rst')
@@ -98,7 +87,7 @@ def atom_file(out):
 
 @build.test
 def sample_dir(out):
-    doc = documents.rst.Document(__name__, 'sample.rst')
+    doc = lazy.rst.Document(__name__, 'sample.rst')
     sample = recipes.Directory('posts', (2011, 5, 18), doc.id)\
             .render('post.html')\
             .for_document(doc)\
@@ -122,7 +111,7 @@ rst = Tests()
 
 @rst.context
 def rst_document():
-    yield documents.rst.Document(__name__, 'sample.rst')
+    yield lazy.rst.Document(__name__, 'sample.rst')
 
 @rst.test
 def rst_properties(doc):
@@ -140,7 +129,7 @@ git = Tests()
 
 @git.context
 def git_history():
-    yield histories.git.History(SAMPLE_DOC)
+    yield lazy.git.History(SAMPLE_DOC)
 
 @git.test
 def history_properties(history):
@@ -167,7 +156,7 @@ fs = Tests()
 def tempfile():
     with NamedTemporaryFile() as tf:
         os.utime(tf.name, (666, 666))
-        yield histories.fs.History(tf.name)
+        yield lazy.fs.History(tf.name)
 
 @fs.test
 def file_timestamps(history):
@@ -188,7 +177,7 @@ html = Tests()
 
 @html.context
 def genshi_html_template():
-    yield templates.genshi.Template(__name__, 'index.html')
+    yield lazy.genshi.Template(__name__, 'index.html')
 
 @html.test
 def index(template):
@@ -205,7 +194,7 @@ xml = Tests()
 
 @xml.context
 def genshi_xml_template():
-    yield templates.genshi.XmlTemplate(__name__, 'atom.xml')
+    yield lazy.genshi.XmlTemplate(__name__, 'atom.xml')
 
 @xml.test
 def atom(template):
@@ -220,7 +209,7 @@ text = Tests()
 
 @text.context
 def genshi_text_template():
-    yield templates.genshi.TextTemplate(__name__, 'robots.txt')
+    yield lazy.genshi.TextTemplate(__name__, 'robots.txt')
 
 @text.test
 def robots(template):
@@ -234,7 +223,7 @@ scss = Tests()
 
 @scss.context
 def scss_stylesheet():
-    yield stylesheets.scss.Stylesheet(__name__, 'main.scss')
+    yield lazy.scss.Stylesheet(__name__, 'main.scss')
 
 @scss.test
 def main(stylesheet):
