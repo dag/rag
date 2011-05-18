@@ -256,7 +256,7 @@ def rst_for_docs(site):
     assert site.documents == dict(rst=lazy.rst.Document)
 
 @bare.test
-def genshi_for_html(site):
+def genshi_for_templates(site):
     assert site.templates == dict(html=lazy.genshi.Template,
                                   xml=lazy.genshi.XmlTemplate,
                                   txt=lazy.genshi.TextTemplate)
