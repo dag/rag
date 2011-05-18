@@ -52,6 +52,7 @@ def module_directory():
 
     class Arbitrary(utils.ModuleDirectory):
         __directory__ = 'arbitraries'
+        __extension__ = 'ext'
 
     yield Arbitrary(__name__, 'arbitrary-file.ext')
 
@@ -240,3 +241,30 @@ def main(stylesheet):
         }
 
         """)
+
+
+bare = Tests()
+
+@bare.context
+def bare_site():
+    site = lazy.bare.Site(__name__)
+    site.use(lazy.rst, lazy.genshi, lazy.scss, lazy.git, lazy.fs)
+    yield site
+
+@bare.test
+def rst_for_docs(site):
+    assert site.documents == dict(rst=lazy.rst.Document)
+
+@bare.test
+def genshi_for_html(site):
+    assert site.templates == dict(html=lazy.genshi.Template,
+                                  xml=lazy.genshi.XmlTemplate,
+                                  txt=lazy.genshi.TextTemplate)
+
+@bare.test
+def scss_for_styles(site):
+    assert site.stylesheets == dict(scss=lazy.scss.Stylesheet)
+
+@bare.test
+def git_and_fs_histories(site):
+    assert site.histories == [lazy.git.History, lazy.fs.History]

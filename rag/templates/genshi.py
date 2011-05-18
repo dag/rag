@@ -28,13 +28,19 @@ class Template(AbstractTemplate, ReusableMixin):
 
 
 class XmlTemplate(Template):
+    __extension__ = 'xml'
 
     serializer = 'xml'
     doctype = None
 
 
 class TextTemplate(Template):
+    __extension__ = 'txt'
 
     class_ = NewTextTemplate
     serializer = 'text'
     doctype = None
+
+
+def configure(site):
+    site.use(Template, XmlTemplate, TextTemplate)

@@ -1,5 +1,6 @@
 import sys
 from os import path
+from abc import ABCMeta, abstractproperty
 
 
 class ReusableMixin(object):
@@ -10,10 +11,19 @@ class ReusableMixin(object):
 
 
 class ModuleDirectory(object):
+    __metaclass__ = ABCMeta
 
     def __init__(self, module, filename):
         self.module = module
         self.filename = filename
+
+    @abstractproperty
+    def __directory__(cls):
+        pass
+
+    @abstractproperty
+    def __extension__(cls):
+        pass
 
     @property
     def directory(self):
@@ -22,6 +32,10 @@ class ModuleDirectory(object):
     @property
     def filepath(self):
         return path.join(self.directory, self.filename)
+
+    @classmethod
+    def configure(cls, site):
+        site.register_type(cls.__directory__, cls.__extension__, cls)
 
 
 def path_from_module(module, *paths):

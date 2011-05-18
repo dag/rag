@@ -41,3 +41,6 @@ class History(AbstractHistory):
     @cached_property
     def edits(self):
         return map(Edit, self.commits)
+
+
+configure = History.configure

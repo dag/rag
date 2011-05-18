@@ -6,6 +6,8 @@ initpkg(__name__,
         fs='rag.histories.fs',
         git='rag.histories.git',
         scss='rag.stylesheets.scss',
-        genshi='rag.templates.genshi'
+        genshi='rag.templates.genshi',
+        bare='rag.sites.bare',
+        Site='rag.sites.default:Site',
     )
 )

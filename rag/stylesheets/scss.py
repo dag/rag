@@ -6,6 +6,7 @@ import scss
 
 
 class Stylesheet(AbstractStylesheet, ReusableMixin):
+    __extension__ = 'scss'
 
     compress = False
 
@@ -25,3 +26,6 @@ class Stylesheet(AbstractStylesheet, ReusableMixin):
         finally:
             scss.LOAD_PATHS = _old
         return compiled
+
+
+configure = Stylesheet.configure

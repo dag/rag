@@ -24,6 +24,10 @@ class AbstractHistory(object):
     def edits(self):
         pass
 
+    @classmethod
+    def configure(cls, site):
+        site.histories.append(cls)
+
 
 class AbstractEdit(object):
     __metaclass__ = ABCMeta

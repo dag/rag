@@ -5,6 +5,7 @@ from ..utils import ReusableMixin
 
 
 class Document(AbstractDocument, ReusableMixin):
+    __extension__ = 'rst'
 
     settings = None
 
@@ -36,3 +37,6 @@ class Document(AbstractDocument, ReusableMixin):
     @cached_property
     def title(self):
         return self.doctree.attributes['title']
+
+
+configure = Document.configure
