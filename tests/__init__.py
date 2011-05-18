@@ -8,7 +8,7 @@ from os import path
 from textwrap import dedent
 from datetime import date, datetime
 from tempfile import NamedTemporaryFile
-from attest import Tests
+from attest import Tests, tempdir
 
 # Make sure the modules are loaded but don't import them to the top-level
 # namespace of this module because we want to use their names for
@@ -20,7 +20,7 @@ import rag.templates.genshi
 import rag.stylesheets.scss
 
 # Let us drop the 'rag.' prefix
-from rag import utils, documents, histories, templates, stylesheets
+from rag import utils, recipes, documents, histories, templates, stylesheets
 
 ROOT_PATH = path.abspath(path.dirname(__file__))
 SAMPLE_DOC = path.join(ROOT_PATH, 'documents', 'sample.rst')
@@ -73,6 +73,49 @@ def arbitrary_file(arbitrary):
     assert arbitrary.directory == path.join(ROOT_PATH, 'arbitraries')
     assert arbitrary.filepath\
         == path.join(ROOT_PATH, 'arbitraries', 'arbitrary-file.ext')
+
+
+build = Tests(contexts=[tempdir])
+
+@build.test
+def index_dir(out):
+    index = recipes.Directory()\
+           .render('start.html', title='Hello!')\
+           .with_context(subtitle='Hi you!')\
+           .to_directory(out)
+    assert index.path_as_file == index.path_as_directory == 'index.html'
+    assert index.template == 'start.html'
+    assert index.context == dict(title='Hello!', subtitle='Hi you!')
+    assert index.filepath == path.join(out, 'index.html')
+    assert not index.built
+
+@build.test
+def atom_file(out):
+    atom = recipes.File('atom.xml').to_directory(out)
+    assert atom.path_as_file == atom.path_as_directory == 'atom.xml'
+    assert atom.filepath == path.join(out, 'atom.xml')
+    assert not atom.built
+
+@build.test
+def sample_dir(out):
+    doc = documents.rst.Document(__name__, 'sample.rst')
+    sample = recipes.Directory('posts', (2011, 5, 18), doc.id)\
+            .render('post.html')\
+            .for_document(doc)\
+            .to_directory(out)
+    assert sample.context['document'] == doc
+    assert sample.path_as_file\
+        == 'posts/2011/5/18/this-is-a-sample-rest-document.html'
+    assert sample.path_as_directory\
+        == 'posts/2011/5/18/this-is-a-sample-rest-document/index.html'
+    assert sample.filepath == path.join(out, sample.path_as_directory)
+    assert not sample.built
+    os.makedirs(path.dirname(sample.filepath))
+    with open(sample.filepath, 'w') as f:
+        f.write('')
+    doctime = int(path.getmtime(doc.filepath))
+    os.utime(sample.filepath, (doctime, doctime))
+    assert sample.built
 
 
 rst = Tests()
