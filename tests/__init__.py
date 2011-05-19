@@ -167,10 +167,12 @@ def file_timestamps(history):
 def file_author(history):
     try:
         import pwd
-        name = pwd.getpwuid(os.getuid()).pw_gecos.split(',')[0]
+        pw = pwd.getpwuid(os.getuid())
+        name = pw.pw_name
+        fullname = pw.pw_gecos.split(',')[0]
     except ImportError:
         name = None
-    assert history.edits[0].author in {os.getlogin(), name}
+    assert history.edits[0].author in {name, fullname}
     assert history.author == history.edits[0].author
 
 
