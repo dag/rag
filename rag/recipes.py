@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractproperty
 from os import path
+import errno
 from brownie.itools import flatten
 from brownie.caching import cached_property
 from .utils import ReusableMixin
@@ -53,8 +54,12 @@ class AbstractRecipe(object):
             return int(path.getmtime(self.document.filepath))\
                 == int(path.getmtime(path.join(self.output_directory,
                                                self.filepath)))
-        except (OSError, AttributeError):
-            return False
+        except OSError as e:
+            if e.errno != errno.ENOENT:
+                raise
+        except AttributeError:
+            pass
+        return False
 
 
 class Directory(AbstractRecipe, ReusableMixin):
