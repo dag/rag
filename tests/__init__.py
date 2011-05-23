@@ -30,7 +30,6 @@ overrides = Tests()
 def class_with_overrides():
 
     class Archetype(utils.OverridableMixin):
-
         typical = 'default'
 
     yield Archetype, Archetype.but(typical='non-standard', more='less')
