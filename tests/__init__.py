@@ -24,19 +24,19 @@ def path_from_module():
         == SAMPLE_DOC
 
 
-reusable = Tests()
+overrides = Tests()
 
-@reusable.context
-def reusable_class():
+@overrides.context
+def class_with_overrides():
 
-    class Archetype(utils.ReusableMixin):
+    class Archetype(utils.OverridableMixin):
 
         typical = 'default'
 
-    yield Archetype, Archetype.using(typical='non-standard', more='less')
+    yield Archetype, Archetype.but(typical='non-standard', more='less')
 
-@reusable.test
-def reusable_types(archetype, customized):
+@overrides.test
+def new_type_from_overrides(archetype, customized):
     assert archetype.typical == 'default'
     assert not hasattr(archetype, 'more')
     assert customized.typical == 'non-standard'

@@ -3,10 +3,10 @@ from os import path
 from abc import ABCMeta, abstractproperty
 
 
-class ReusableMixin(object):
+class OverridableMixin(object):
 
     @classmethod
-    def using(cls, **overrides):
+    def but(cls, **overrides):
         return type(cls.__name__, (cls,), overrides)
 
 

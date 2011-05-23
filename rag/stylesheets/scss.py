@@ -1,11 +1,11 @@
 from __future__ import absolute_import
 from brownie.caching import cached_property
 from . import AbstractStylesheet
-from ..utils import ReusableMixin
+from ..utils import OverridableMixin
 import scss
 
 
-class Stylesheet(AbstractStylesheet, ReusableMixin):
+class Stylesheet(AbstractStylesheet, OverridableMixin):
     __extension__ = 'scss'
 
     compress = False

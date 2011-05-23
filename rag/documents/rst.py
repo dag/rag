@@ -1,10 +1,10 @@
 from brownie.caching import cached_property
 from docutils import core, nodes
 from . import AbstractDocument
-from ..utils import ReusableMixin
+from ..utils import OverridableMixin
 
 
-class Document(AbstractDocument, ReusableMixin):
+class Document(AbstractDocument, OverridableMixin):
     __extension__ = 'rst'
 
     settings = None

@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from ..utils import ReusableMixin
+from ..utils import OverridableMixin
 from . import AbstractTemplate
 from genshi.template import TemplateLoader, NewTextTemplate
 
@@ -7,7 +7,7 @@ from genshi.template import TemplateLoader, NewTextTemplate
 _loaders = {}
 
 
-class Template(AbstractTemplate, ReusableMixin):
+class Template(AbstractTemplate, OverridableMixin):
 
     class_ = None
     serializer = 'html'

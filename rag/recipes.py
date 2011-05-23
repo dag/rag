@@ -3,7 +3,7 @@ from os import path
 import errno
 from brownie.itools import flatten
 from brownie.caching import cached_property
-from .utils import ReusableMixin
+from .utils import OverridableMixin
 
 
 class AbstractRecipe(object):
@@ -62,7 +62,7 @@ class AbstractRecipe(object):
         return False
 
 
-class Directory(AbstractRecipe, ReusableMixin):
+class Directory(AbstractRecipe, OverridableMixin):
 
     extension = '.html'
 
