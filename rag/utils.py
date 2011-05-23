@@ -22,7 +22,7 @@ class ModuleDirectory(object):
         pass
 
     @abstractproperty
-    def __extension__(cls):
+    def extension(cls):
         pass
 
     @property
@@ -35,7 +35,7 @@ class ModuleDirectory(object):
 
     @classmethod
     def configure(cls, site):
-        site.register_type(cls.__directory__, cls.__extension__, cls)
+        site.register_type(cls.__directory__, cls.extension, cls)
 
 
 def path_from_module(module, *paths):

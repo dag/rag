@@ -52,7 +52,7 @@ def module_directory():
 
     class Arbitrary(utils.ModuleDirectory):
         __directory__ = 'arbitraries'
-        __extension__ = 'ext'
+        extension = 'ext'
 
     yield Arbitrary(__name__, 'arbitrary-file.ext')
 

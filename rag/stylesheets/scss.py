@@ -6,8 +6,8 @@ import scss
 
 
 class Stylesheet(AbstractStylesheet, OverridableMixin):
-    __extension__ = 'scss'
 
+    extension = 'scss'
     compress = False
 
     @cached_property

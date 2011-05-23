@@ -28,14 +28,14 @@ class Template(AbstractTemplate, OverridableMixin):
 
 
 class XmlTemplate(Template):
-    __extension__ = 'xml'
+    extension = 'xml'
 
     serializer = 'xml'
     doctype = None
 
 
 class TextTemplate(Template):
-    __extension__ = 'txt'
+    extension = 'txt'
 
     class_ = NewTextTemplate
     serializer = 'text'

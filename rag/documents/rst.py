@@ -5,8 +5,8 @@ from ..utils import OverridableMixin
 
 
 class Document(AbstractDocument, OverridableMixin):
-    __extension__ = 'rst'
 
+    extension = 'rst'
     settings = None
 
     @cached_property
