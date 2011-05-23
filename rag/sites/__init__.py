@@ -1,4 +1,7 @@
-from abc import ABCMeta, abstractproperty
+import os
+from abc import ABCMeta, abstractproperty, abstractmethod
+from brownie.caching import cached_property
+from ..utils import path_from_module
 
 
 class AbstractSite(object):
@@ -6,6 +9,10 @@ class AbstractSite(object):
 
     def __init__(self, module):
         self.module = module
+
+    @cached_property
+    def root_path(self):
+        return path_from_module(self.module)
 
     @abstractproperty
     def documents(self):
@@ -23,6 +30,10 @@ class AbstractSite(object):
     def histories(self):
         pass
 
+    @abstractmethod
+    def recipes(self):
+        pass
+
     def register_type(self, directory, extension, factory):
         if directory not in {'documents', 'templates', 'stylesheets'}:
             raise ValueError('unknown site directory {!r}'.format(directory))
@@ -35,3 +46,11 @@ class AbstractSite(object):
     def use(self, *types):
         for t in types:
             t.configure(self)
+
+    def __iter__(self):
+        for doc in os.listdir(path_from_module(self.module, 'documents')):
+            ext = doc.split('.', 1)[1]
+            try:
+                yield self.documents[ext](self.module, doc)
+            except KeyError:
+                pass

@@ -253,6 +253,10 @@ def bare_site():
     yield site
 
 @bare.test
+def site_has_root_path(site):
+    assert site.root_path == ROOT_PATH
+
+@bare.test
 def rst_for_docs(site):
     assert site.documents == dict(rst=lazy.rst.Document)
 
@@ -269,3 +273,31 @@ def scss_for_styles(site):
 @bare.test
 def git_and_fs_histories(site):
     assert site.histories == [lazy.git.History, lazy.fs.History]
+
+@bare.test
+def iterates_over_docs(site):
+    docs = list(site)
+    assert len(docs) == 1
+    assert isinstance(docs[0], lazy.rst.Document)
+    assert docs[0].filepath == SAMPLE_DOC
+
+@bare.test
+def builders(site):
+
+    @site.build_document
+    def blog_post(document):
+        yield recipes.Directory('blog', document.id)
+
+    @site.build
+    def feed(documents):
+        yield recipes.File('blog', 'feed.xml')
+
+    recipelist = list(site.recipes())
+    assert len(recipelist) == 2
+    assert recipelist[0].context['document'].filepath == SAMPLE_DOC
+    assert recipelist[0].path_as_file\
+        == 'blog/this-is-a-sample-rest-document.html'
+    assert 'document' not in recipelist[1].context
+    assert recipelist[1].path_as_file\
+        == recipelist[1].path_as_directory\
+        == 'blog/feed.xml'
