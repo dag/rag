@@ -62,7 +62,7 @@ class AbstractRecipe(object):
         return False
 
 
-class Directory(AbstractRecipe, OverridableMixin):
+class Page(AbstractRecipe, OverridableMixin):
 
     extension = '.html'
 

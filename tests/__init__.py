@@ -67,8 +67,8 @@ def arbitrary_file(arbitrary):
 build = Tests(contexts=[tempdir])
 
 @build.test
-def index_dir(out):
-    index = recipes.Directory()\
+def index_page(out):
+    index = recipes.Page()\
            .render('start.html', title='Hello!')\
            .with_context(subtitle='Hi you!')\
            .to_directory(out)
@@ -86,9 +86,9 @@ def atom_file(out):
     assert not atom.built
 
 @build.test
-def sample_dir(out):
+def sample_page(out):
     doc = lazy.rst.Document(__name__, 'sample.rst')
-    sample = recipes.Directory('posts', (2011, 5, 18), doc.id)\
+    sample = recipes.Page('posts', (2011, 5, 18), doc.id)\
             .render('post.html')\
             .for_document(doc)\
             .to_directory(out)
@@ -286,7 +286,7 @@ def builders(site):
 
     @site.build_document
     def blog_post(document):
-        yield recipes.Directory('blog', document.id)
+        yield recipes.Page('blog', document.id)
 
     @site.build
     def feed(documents):
